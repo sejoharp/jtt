@@ -1,7 +1,9 @@
 import models.{User, UserDao}
 import org.specs2.mutable.Specification
 
-import scala.util.Success
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success}
 
 class UserIntegrationSpec extends Specification {
   "User" should {
@@ -9,9 +11,10 @@ class UserIntegrationSpec extends Specification {
       UserDao.save(UserTestdata.user1)
 
       UserDao.findAll()
-        .onComplete({ case Success(all) =>
-        all.head must equalTo(UserTestdata.user1)
-        all.size must equalTo(1)
+        .onComplete({
+        case Success(all) =>
+          all.head must equalTo(UserTestdata.user1)
+          all.size must equalTo(1)
       })
     }
     "get all instances." in new WithDbData {
@@ -19,10 +22,12 @@ class UserIntegrationSpec extends Specification {
       UserDao.save(UserTestdata.user2)
 
       UserDao.findAll()
-        .onComplete({ case Success(all) =>
-        all.head must equalTo(UserTestdata.user1)
-        all.tail.head must equalTo(UserTestdata.user2)
-        all.size must equalTo(2)
+        .onComplete({
+        case Success(all) =>
+          all.head must equalTo(UserTestdata.user1)
+          all.tail.head must equalTo(UserTestdata.user2)
+          all.size must equalTo(2)
+        case Failure(t) => failure("kaputt")
       })
     }
     "remove one instance." in new WithDbData {
@@ -31,7 +36,9 @@ class UserIntegrationSpec extends Specification {
       UserDao.removeById(UserTestdata.user1._id)
 
       UserDao.count()
-        .onComplete({ case Success(amount) => amount must equalTo(0)})
+        .onComplete({
+        case Success(amount) => amount must equalTo(0)
+      })
     }
     "count all instances." in new WithDbData {
       UserDao.save(UserTestdata.user1)
@@ -45,8 +52,7 @@ class UserIntegrationSpec extends Specification {
 
       UserDao.save(newUser1)
 
-      UserDao.findById(newUser1._id)
-        .onComplete({ case Success(user) => user must equalTo(newUser1)})
+      Await.result(UserDao.findById(newUser1._id), Duration(2, "sec")) must beSome(newUser1)
     }
   }
 }
