@@ -8,9 +8,8 @@ resolvers += Resolver.sonatypeRepo("releases")
 
 resolvers += "Sonatype Snapshots snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
 
-
 // The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.0")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.1")
 
 // web plugins
 
