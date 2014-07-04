@@ -9,7 +9,7 @@ import scala.concurrent.Future
 case class Interval(_id: BSONObjectID = BSONObjectID.generate,
   userId: BSONObjectID,
   start: DateTime,
-  stop: DateTime = null)
+  stop: Option[DateTime] = None)
 
 object Interval {
   implicit val personHandler = Macros.handler[Interval]
@@ -25,6 +25,6 @@ object IntervalDao extends BsonDao[Interval, BSONObjectID](MongoContext.db, "int
   def isUserWorking(userId: BSONObjectID): Future[Boolean] = {
     count(BSONDocument("$and" -> BSONArray(
       BSONDocument("userId" -> userId),
-      BSONDocument("stop" -> null)))).map(amount => amount > 0)
+      BSONDocument("stop" -> BSONDocument("$exists" -> false))))).map(amount => amount > 0)
   }
 }
