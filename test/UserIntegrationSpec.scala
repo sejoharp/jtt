@@ -8,51 +8,41 @@ import scala.util.{Failure, Success}
 class UserIntegrationSpec extends Specification {
   "User" should {
     "save one instance." in new WithDbData {
-      UserDao.save(UserTestdata.user1)
+      await(UserDao.save(UserTestdata.user1))
 
-      UserDao.findAll()
-        .onComplete({
-        case Success(all) =>
-          all.head must equalTo(UserTestdata.user1)
-          all.size must equalTo(1)
-      })
+      val intervals = await(UserDao.findAll())
+          intervals.head must equalTo(UserTestdata.user1)
+          intervals.size must equalTo(1)
     }
     "get all instances." in new WithDbData {
-      UserDao.save(UserTestdata.user1)
-      UserDao.save(UserTestdata.user2)
+      await(UserDao.save(UserTestdata.user1))
+      await(UserDao.save(UserTestdata.user2))
 
-      UserDao.findAll()
-        .onComplete({
-        case Success(all) =>
-          all.head must equalTo(UserTestdata.user1)
-          all.tail.head must equalTo(UserTestdata.user2)
-          all.size must equalTo(2)
-        case Failure(t) => failure("kaputt")
-      })
+      val intervals = await(UserDao.findAll())
+          intervals.head must equalTo(UserTestdata.user1)
+          intervals.tail.head must equalTo(UserTestdata.user2)
+          intervals.size mustEqual 2
     }
     "remove one instance." in new WithDbData {
-      UserDao.save(UserTestdata.user1)
+      await(UserDao.save(UserTestdata.user1))
 
-      UserDao.removeById(UserTestdata.user1._id)
+      await(UserDao.removeById(UserTestdata.user1._id))
 
-      UserDao.count()
-        .onComplete({
-        case Success(amount) => amount must equalTo(0)
-      })
+      await(UserDao.count()) mustEqual 0
     }
     "count all instances." in new WithDbData {
-      UserDao.save(UserTestdata.user1)
-      UserDao.save(UserTestdata.user2)
+      await(UserDao.save(UserTestdata.user1))
+      await(UserDao.save(UserTestdata.user2))
 
-      UserDao.count() must equalTo(2)
+      await(UserDao.count()) mustEqual 2
     }
     "change worktime per week" in new WithDbData {
-      UserDao.save(UserTestdata.user1)
+      await(UserDao.save(UserTestdata.user1))
       val newUser1 = User(UserTestdata.user1._id, UserTestdata.user1.name, 1000)
 
       UserDao.save(newUser1)
 
-      Await.result(UserDao.findById(newUser1._id), Duration(2, "sec")) must beSome(newUser1)
+      await(UserDao.findById(newUser1._id)) must beSome(newUser1)
     }
   }
 }
