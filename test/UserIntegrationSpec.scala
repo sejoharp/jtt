@@ -1,27 +1,23 @@
 import models.{User, UserDao}
 import org.specs2.mutable.Specification
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import scala.util.{Failure, Success}
-
 class UserIntegrationSpec extends Specification {
   "User" should {
     "save one instance." in new WithDbData {
       await(UserDao.save(UserTestdata.user1))
 
       val intervals = await(UserDao.findAll())
-          intervals.head must equalTo(UserTestdata.user1)
-          intervals.size must equalTo(1)
+      intervals.head must equalTo(UserTestdata.user1)
+      intervals.size must equalTo(1)
     }
     "get all instances." in new WithDbData {
       await(UserDao.save(UserTestdata.user1))
       await(UserDao.save(UserTestdata.user2))
 
       val intervals = await(UserDao.findAll())
-          intervals.head must equalTo(UserTestdata.user1)
-          intervals.tail.head must equalTo(UserTestdata.user2)
-          intervals.size mustEqual 2
+      intervals.head must equalTo(UserTestdata.user1)
+      intervals.tail.head must equalTo(UserTestdata.user2)
+      intervals.size mustEqual 2
     }
     "remove one instance." in new WithDbData {
       await(UserDao.save(UserTestdata.user1))

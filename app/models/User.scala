@@ -1,16 +1,14 @@
 package models
 
 import reactivemongo.bson._
-import reactivemongo.extensions.dao.Handlers._
-import org.joda.time.DateTime
 import reactivemongo.extensions.dao.BsonDao
 
 case class User(_id: BSONObjectID = BSONObjectID.generate,
-  name: String,
-  workTimePerWeek: Long)
+                name: String,
+                workTimePerWeek: Long)
 
 object User {
-  implicit val personHandler = Macros.handler[User]
+  implicit val userHandler = Macros.handler[User]
 }
 
 object UserDao extends BsonDao[User, BSONObjectID](MongoContext.db, "users")
