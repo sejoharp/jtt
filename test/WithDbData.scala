@@ -1,4 +1,4 @@
-import models.{IntervalDao, UserDao}
+import models.{TokenDao, IntervalDao, UserDao}
 import org.specs2.execute.{AsResult, Result}
 import play.api.test.WithApplication
 
@@ -14,6 +14,7 @@ abstract class WithDbData extends WithApplication {
   def setupData() {
     await(UserDao.removeAll())
     await(IntervalDao.removeAll())
+    await(TokenDao.removeAll())
   }
 
   def await[T](awaitable: Awaitable[T], atMost: Duration = Duration(5, "sec")): T = Await.result(awaitable,atMost)

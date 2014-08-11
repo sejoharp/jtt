@@ -1,5 +1,7 @@
 package models
 
+import org.joda.time.DateTime
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson._
 import reactivemongo.extensions.dao.BsonDao
 

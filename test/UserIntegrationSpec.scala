@@ -1,5 +1,6 @@
-import models.{User, UserDao}
+import models.{Token, User, UserDao}
 import org.specs2.mutable.Specification
+import play.api.libs.Crypto
 
 class UserIntegrationSpec extends Specification {
   "User" should {
@@ -36,7 +37,7 @@ class UserIntegrationSpec extends Specification {
       await(UserDao.save(UserTestdata.user1))
       val newUser1 = User(UserTestdata.user1._id, UserTestdata.user1.name, 1000)
 
-      UserDao.save(newUser1)
+      await(UserDao.save(newUser1))
 
       await(UserDao.findById(newUser1._id)) must beSome(newUser1)
     }
